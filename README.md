@@ -8,6 +8,25 @@
 
 The Degree Audit Reporting System (DARS) is a computer generated report for undergraduate and associate level students that matches the requirements of a degree program with a student's course work taken. The audit identifies those graduation requirements that are completed as well as those requirements that still need to be completed.
 
+## Table of Contents
+
+* [Introduction](#introduction)
+* [Technology Stack](#technology-stack)
+* [System Architecture](#system-architecture)
+* [Project Structure](#project-structure)
+* [Frontend–Backend Integration](#frontendbackend-integration)
+* [System Workflow](#system-workflow)
+* [Graduation Requirement Model](#graduation-requirement-model)
+* [Environment Requirements](#environment-requirements)
+* [Quick Start](#quick-start)
+* [Free Online Demo with Cloudflare Tunnel](#free-online-demo-with-cloudflare-tunnel)
+* [Common API Endpoints](#common-api-endpoints)
+* [Frontend Routes](#frontend-routes)
+* [Testing and Validation](#testing-and-validation)
+* [Command Reference](#command-reference)
+* [License](#license)
+* [中文版說明](#111114學年度-政大應數系-學士班畢業審核系統)
+
 ## Introduction 
 
 This repository is the final project for the **114-2 Database Systems** course.
@@ -50,7 +69,44 @@ Database:   MySQL
 Container:  Docker Compose
 ```
 
+## System Architecture
 
+```mermaid
+flowchart LR
+    User[Student / Admin]
+
+    Frontend[React + Vite Frontend]
+
+    Backend[Express.js Backend]
+
+    Auth[JWT Auth Middleware]
+
+    Routes[API Routes]
+
+    Services[Business Logic Services]
+
+    Importer[Transcript Importer]
+
+    Upload[Upload Route]
+
+    DB[(MySQL Database)]
+
+    User --> Frontend
+
+    Frontend --> Backend
+
+    Backend --> Auth
+
+    Auth --> Routes
+
+    Routes --> Services
+    Routes --> Importer
+    Routes --> Upload
+
+    Services --> DB
+    Importer --> DB
+    Upload --> DB
+```
 
 ## Project Structure
 
@@ -70,69 +126,6 @@ Container:  Docker Compose
 ├── requirement.txt         # System and functional requirements
 └── README.md
 ```
-
-
-
-## Frontend–Backend Integration
-
-The frontend does not access the database directly.  
-All data operations are performed through backend API endpoints.
-
-```text
-User interaction
-    ↓
-React page / component
-    ↓
-frontend/src/api/hooks.ts
-    ↓
-frontend/src/api/client.ts
-    ↓
-HTTP API request
-    ↓
-backend/src/routes/*
-    ↓
-backend/src/controllers/*
-    ↓
-backend/src/services/*
-    ↓
-Sequelize models
-    ↓
-MySQL
-> **Security Notice.** The system uses JWT-based authentication and backend role/owner authorization for student transcript, audit, and admin APIs. Because this remains a course/demo deployment, please still avoid uploading real sensitive academic records unless the deployment environment, secrets, database access, and transport security have been reviewed.
-
-
-
-## Technology Stack
-
-```text
-Frontend:   React + Vite + TypeScript + Tailwind CSS
-Backend:    Node.js + Express + Sequelize
-Database:   MySQL
-Container:  Docker Compose
-```
-
-
-
-## Project Structure
-
-```text
-1142-nccu-database-systems/
-├── backend/                # Express API, Sequelize models, and audit engine
-│   ├── src/                # Backend source code
-│   ├── data/               # Course Excel files, required-course rules, and demo transcript JSON
-│   ├── Dockerfile          # Backend Docker / Railway deployment setup
-│   └── package.json
-├── frontend/               # React + Vite frontend application
-├── docs/                   # API docs, backend design, assumptions, and performance reports
-├── performance/            # k6 load testing scripts
-├── .env.example            # Docker Compose environment template
-├── docker-compose.yml      # Local Docker Compose setup: MySQL + backend
-├── .env.example            # Example environment variables for local Docker Compose
-├── requirement.txt         # System and functional requirements
-└── README.md
-```
-
-
 
 ## Frontend–Backend Integration
 
